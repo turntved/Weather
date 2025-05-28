@@ -30,10 +30,8 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       const data = await res.json();
 
-      if (data.cod !== 200) {
-        gsap.to(display, { opacity: 0, duration: 0.5 });
+      if (!res.ok || !data.weather) {
         display.innerHTML = `<p>City not found 😢</p>`;
-        gsap.to(display, { opacity: 1, duration: 0.5 });
         return;
       }
 
@@ -73,6 +71,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Initial fetch
+  // Load default city
   fetchWeather("Tokyo");
 });
