@@ -1,17 +1,21 @@
-const icons = {
+const weatherIcons = {
   Clear: '☀️',
   Rain: '🌧️',
   Snow: '❄️',
   Clouds: '☁️',
   Thunderstorm: '⛈️',
+  Drizzle: '🌦️',
+  Mist: '🌫️',
 };
 
 const bgColors = {
   Clear: '#FFD93D',
   Rain: '#5DADE2',
   Snow: '#85C1E9',
-  Clouds: '#D6DBDF',
+  Clouds: '#7f8c8d',
   Thunderstorm: '#F1C40F',
+  Drizzle: '#76D7C4',
+  Mist: '#B2BABB',
 };
 
 async function fetchWeather(city) {
@@ -19,36 +23,44 @@ async function fetchWeather(city) {
   const res = await fetch(
     `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
   );
-  const data = await res.json();
 
+  const data = await res.json();
   if (data.cod !== 200) {
-    document.getElementById('weather-info').innerHTML = `<p>City not found!</p>`;
+    gsap.to("#weather-display", { opacity: 0, duration: 0.5 });
+    document.getElementById("weather-display").innerHTML = `<p>City not found 😢</p>`;
+    gsap.to("#weather-display", { opacity: 1, duration: 0.5 });
     return;
   }
 
   const weather = data.weather[0].main;
-  const temp = data.main.temp;
+  const temp = data.main.temp.toFixed(1);
   const name = data.name;
 
-  document.getElementById('weather-info').innerHTML = `
-    <div class="weather-icon">${icons[weather] || '🌍'}</div>
+  document.getElementById("weather-display").innerHTML = `
+    <div class="weather-icon">${weatherIcons[weather] || '🌍'}</div>
     <h2>${name}</h2>
     <p>${temp}°C</p>
     <p>${weather}</p>
   `;
 
-  gsap.to('body', {
-    backgroundColor: bgColors[weather] || '#777',
-    duration: 1.2,
-    ease: 'power2.inOut'
+  gsap.to("body", {
+    backgroundColor: bgColors[weather] || '#333',
+    duration: 1.5,
+    ease: "power2.inOut",
   });
+
+  gsap.fromTo(
+    "#weather-display",
+    { opacity: 0, y: 30 },
+    { opacity: 1, y: 0, duration: 1, ease: "power2.out" }
+  );
 }
 
-document.getElementById('city-input').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    fetchWeather(e.target.value);
+document.getElementById("city-input").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    fetchWeather(e.target.value.trim());
   }
 });
 
-// Default city
-fetchWeather('Tokyo');
+// Default load
+fetchWeather("Tokyo");
