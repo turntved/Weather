@@ -72,5 +72,5 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Load default city
-  fetchWeather("Tokyo");
+  fetchWeather("Ahmedabad");
 });
